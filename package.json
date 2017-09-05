@@ -1,0 +1,15 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "signaling": "node node_modules/foglet-signaling-server/express-signaling-server.js"
+  },
+  "author": "Folkvir & Callidon",
+  "license": "MIT",
+  "dependencies": {
+    "foglet-core": "^3.0.1",
+    "foglet-signaling-server": "^0.3.1"
+  }
+}

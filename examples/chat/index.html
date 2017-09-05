@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Chat</title>
+
+    <!-- Bootstrap -->
+    <link href="./../utils/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <style>
+
+  .link {
+    stroke-width: 1.5px;
+  }
+
+  text {
+    font: 10px sans-serif;
+    pointer-events: none;
+  }
+
+  .col-md-4{
+    border: 1px solid black;
+  }
+
+
+  </style>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-0" style='background-color:#f1f1f1'>
+        </div>
+        <div class="col-md-10 col-md-offset-1">
+          <div class='row'>
+            <h1>Simple messaging application with foglet-core</h1>
+          </div>
+          
+          <div>  
+            <button class='btn btn-default' id='beginConnection' style='color:red' onclick='connection()'> Enter in the messaging app ! </button>
+          </div>
+
+          <div id='chatBox' style='display:none'>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div id='chatBoxMessage'></div>
+              </div>
+              <div class="panel-footer"><form id='submitMessage'><input name='message' type="text" value='' class="form-control" placeholder="Enter your text here !" aria-describedby="basic-addon1"><input type='submit' style='display:none'/></form></div>
+            </div> 
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /.container -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="./../utils/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../utils/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./../../node_modules/foglet-core/dist/foglet.bundle.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
