@@ -143,7 +143,7 @@ app.connection()
   // send our message each time we hit the button
   const btn = document.getElementById("send-message")
   btn.addEventListener("click", () => {
-    app.sendbroadcast('hello World!')
+    app.sendBroadcast('hello World!')
   }, false)
 })
 .catch(console.error) // catch connection errors
