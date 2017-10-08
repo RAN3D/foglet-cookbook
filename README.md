@@ -4,248 +4,172 @@ Learn here how to use the [foglet-core](https://github.com/RAN3D/foglet-core) li
 
 # Table of contents
 * [Key concepts](#key-concepts)
-* [Bulding a simple messaging app](#bulding-a-simple-messaging-app)
+* [Foglet Hello World](#foglet-hello-world)
 * [Discover the Protocol API](#discover-the-protocol-api)
 * [RPS and Overlays](#rps-and-overlays)
 
 # Key concepts
 
-foglet-core relies on [WebRTC](https://webrtc.org/). And communications to servers are very limited to the first connection. Of course, it depends on **your** application. 
+`foglet-core` allows to build fog computing applications, *i.e.*, applications that runs in a *fiog of browsers*.
+Such application is called a **Foglet**.
 
-**...work in progress**
+A Foglet connect browsers through a Random Peer
+Sampling (RPS) overlay network [1]. Such a network approximates a random graph where
+each data consumer is connected to a fixed number of neighbors. It is resilient to churn, to
+failures and communication with neighbors is a zero-hop.
 
-# Bulding a simple messaging app
+In the context of browsers, basic communications rely on [WebRTC](https://webrtc.org/) to establish a
+data-channel between browsers and SPRAY [2] to enable RPS on WebRTC. Each browser
+maintains a set of neighbors K called a view that is a random subset of the whole network.
+To keep its view random, a data consumer renews it periodically by shuffling its view with
+the view of a random neighbor.
 
-This simple messaging app will be explained step by step.
-But if you want to just see the code you can find it in the **examples/chat/** folder.
+As a Foglet rely on WebRTC for communication, it requires **a signaling server** to disocver new peers 
+and **ICE servers** to connect browsers, throught NAT for example.
+These points will be discussed in details later.
+
+# Foglet Hello World
+
+To demonbstrate all key concepts of a Foglet, let's build a Hello world aplication.
+it will be a simple Foglet that broadcast the message *hello world!* to all connected browsers.
+
+All code written during this tutorial can be found on this repository.
 
 ## Setting up the project
 
-Firstly install the cookbook by: `npm install`
+First, setup a new npm project
+```
+mkdir foglet-hello-world
+cd foglet-hello-world
+npm init
+```
 
-You will install 2 libraries: **foglet-core** and **foglet-signaling-server**
+Next, install the core library and the development tools for foglet apps
+```
+npm install --save foglet-core
+npm install --save-dev foglet-scripts
+```
 
-## Installing the foglet library
+Edit your `package.json` file to add the following fields:
+```json
+"scripts: {
+  "start": "foglet-scripts start",
+  "build": "foglet-scripts build"
+},
+...
+"foglet-scripts": {
+    "build": {
+      "root": "app/index.js",
+      "output": "dist/"
+    }
+  }
+```
 
-The **foglet-core** library is delivered with 2 bundles (minified and not minified) for web applications. These bundles are in **node_modules/foglet-core/dist/**.
+Now, create a `app/` folder in which you will put the following files
 
-## Let's build this app !
-
-1) create an index.html (HTML)
-
+**app/index.html**
 ```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Chat</title>
-
-    <!-- Bootstrap -->
-    <link href="./../utils/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <title>Foglet Hellow world</title>
   </head>
 
-  <style>
-
-  .link {
-    stroke-width: 1.5px;
-  }
-
-  text {
-    font: 10px sans-serif;
-    pointer-events: none;
-  }
-
-  .col-md-4{
-    border: 1px solid black;
-  }
-
-
-  </style>
-
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-0" style='background-color:#f1f1f1'>
-        </div>
-        <div class="col-md-10 col-md-offset-1">
-          <div class='row'>
-            <h1>Simple messaging application with foglet-core</h1>
-          </div>
-          
-          <div>  
-            <button class='btn btn-default' id='beginConnection' style='color:red' onclick='connection()'> Enter in the messaging app ! </button>
-          </div>
-
-          <div id='chatBox' style='display:none'>
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <div id='chatBoxMessage'></div>
-              </div>
-              <div class="panel-footer"><form id='submitMessage'><input name='message' type="text" value='' class="form-control" placeholder="Enter your text here !" aria-describedby="basic-addon1"><input type='submit' style='display:none'/></form></div>
-            </div> 
-          </div>
-
-        </div>
-      </div>
-    </div><!-- /.container -->
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="./../utils/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../utils/bootstrap/js/bootstrap.min.js"></script>
-    <script src="./../../node_modules/foglet-core/dist/foglet.bundle.js"></script>
-    <script src="./main.js"></script>
+    <button id="send-message">Hello World!</button>
+    <!-- foglet-scripts will build your app in one file in the dist/ folder -->
+    <script src="../dist/main.js"></script>
   </body>
 </html>
 ```
 
-I think this part is easy to understand. There is a first button to prompt a box to enter your pseudo. Once done a panel with the chat box will appear.
-
-At the end of the file you will find this line in order to include the foglet bundle in your html file: 
-
+**app/index.js**
 ```javascript
-<script src="./../../node_modules/foglet-core/dist/foglet.bundle.js"></script>
+'use strict'
+
+console.log('hello world')
 ```
 
-Of course you can choose to import the minified bundle if you want(foglet.bundle.min.js)
+To test your installation, run `npm run build` to trigger the build chain.
+If everything went well, you should have `dist/main.js` file created, and if you
+open `index.html` in a browser, you should see **hello world!** in the console.
 
-Final step, add the main.js script to index.html file
+## Let's build the real app now!
 
+Now that's your project is ready, let's create our Hello World Foglet.
+Here is the complete code to put in **index.js**.
+
+**NB:** Notice that we use a `require` style syntax here to import dependencies, but you are free to use any import syntax you prefer.
 ```javascript
-<script src="./main.js"></script>
-```
+'use strict'
 
+const Foglet = require('foglet-core').Foglet
 
-2) create a main.js  (JavaScript)
-
-```javascript
-'use strict';
-
-localStorage.debug = 'foglet-core:*';
-
-const Foglet = require('foglet').Foglet;
-
-let app = new Foglet({
-  verbose: true, // want some logs ? switch to false otherwise
+const app = new Foglet({
+  verbose: true, // activate logs. Put false to disable them in production!
   rps: {
     type: 'spray-wrtc',
     options: {
-      protocol: 'foglet-cookbook-chat', // foglet running on the protocol foglet-example, defined for spray-wrtc
-      webrtc:	{ // add WebRTC options
+      protocol: 'foglet-hello-world', // name of the protocol run by your app
+      webrtc:	{ // WebRTC options
         trickle: true, // enable trickle (divide offers in multiple small offers sent by pieces)
-        iceServers : [] // define iceServers in non local instance
+        iceServers : [] // iceServers, we lkeave it empty for now
       },
-      timeout: 2 * 60 * 1000, // spray-wrtc timeout before definitively close a WebRTC connection.
+      timeout: 2 * 60 * 1000, // WebRTC connections timeout
       delta: 10 * 1000, // spray-wrtc shuffle interval
-      signaling: {
+      signaling: { //
         address: 'http://localhost:3000/',
-        // signalingAdress: 'https://signaling.herokuapp.com/', // address of the signaling server
-        room: 'foglet-cookbook-chat-room' // room to join
+        room: 'foglet-hello-world-room' // room to join
       }
     }
   }
-});
-
-/**
- * When we receive a message, add the message to the chatBox
- */
-app.onBroadcast((id, msg) => {
-  console.log(id, msg);
-  addMessage(msg);
 })
 
-/**
- * When we submit a message, send to all other peers
- */
-$('#submitMessage').submit(function () {
-  let message = $('#submitMessage').find('input[name="message"]').val();
-  let object = {
-    pseudo: NAME,
-    message
-  };
-  addMessage(object);
-  app.sendBroadcast(object);
-  return false;
-});
+// connect to the signaling server
+app.share()
 
-/**
- * VARIABLES
- */
-let NAME = 'Jon Snow';
+// connect our app to the fog
+app.connection()
+.then(() => {
+  console.log('application connected!')
 
-/**
- * Connection function
- */
-function connection(){
-  // choose a pseudo
-  let pseudo = prompt("Please enter your pseudo:", NAME);
-  if (pseudo == null || pseudo == "") {
-      // prompt cancelled, do nothing
-  } else {
-      NAME = pseudo;
-      // prompt ok do the connection to the foglet
-      // we active the foglet sharing mechanism
-      app.share();
-      // We connect this peer to the network on the room foglet-cookbook-chat-room by passing through the signaling server specified in options
-      app.connection().then(() => {
-        console.log('Connection succeeded.');
-        drawChatBox();
-        addMessage({
-          pseudo: NAME,
-          message: "You're now connected."
-        });
-      }).catch((e) => console.log('An error occured', e));
-  }
-}
+  // listen for incoming broadcast
+  app.onBroadcast((id, msg) => {
+    console.log('I have received a message from peer', id, ':', msg)
+  })
 
-/**
- * UTILS FUNCTIONS
- */
-function drawChatBox() {
-  $("#chatBox").show();
-  $("#beginConnection").hide();
-}
-function addMessage(msg){
-  $('#chatBoxMessage').append(`<p>${msg.pseudo}: ${msg.message}</p>`);
-}
+  // send our message each time we hit the button
+  const btn = document.getElementById("send-message")
+  btn.addEventListener("click", () => {
+    app.sendbroadcast('hello World!')
+  }, false)
+})
+.catch(console.error) // catch connection errors
 ```
 
+Now, run `npm run build` to rebuild the app.
+Next, run `npm start` to srtart the signaling server, and then open **index.html** in two tabs, to create two distinct peers.
+
+Open the console, wait for connections to be done, and then click those damn buttons!
+You should see messages popping in each tab!
 
 ## Setting up a signaling server
 
 A signaling server acts as a forwarding server in order to connect all new peers on the specified room.
+You can access an implenmentation at https://github.com/RAN3D/foglet-signaling-server
 
-If you are interested in discovering our implementation go to: https://github.com/RAN3D/foglet-signaling-server
-
-But here we just want to run the server: `npm run signaling`
-
-It will run a signaling server on the port 3000, the address to put in the main.js is http://localhost:3000/. 
+However, if you juste need a signaling server out of the box, the foglet build tools contains one that can
+be run with `foglet-scripts start`.
 
 ## Breaking the ICE
 
-Easy isn't it ? let's talk about Ice, it's cold and hard but not ununderstandable ahah.
+**Work in prgress**
 
 A complete and usefull documentation is available [here](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols)
 
-But in a short way, when your are in a local network you does not need to use ICE. But if you want to contact a friend on the other side of the world you have to pass through firewalls and cie. And now you have to use ICE for this purpose (STUN and TURN).
-
-I suggest you to read the previous link. This is very interesting and you will probably find more answers than here ! 
-
-## Final version
-
-Now if you want to make your application accessible to the world. There is an elegant solution:
-
-**... work in progress**
+In short: when your are in a local network, you don't need to use ICE. But if you want to contact a peer on the other side of the world, you may have to pass through firewalls and all sort of things. ICE servers are here to resolve this.
 
 # Discover the Protocol API
 
