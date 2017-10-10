@@ -53,55 +53,46 @@ npm install --save-dev foglet-scripts
 Edit your `package.json` file to add the following fields:
 ```json
 "scripts: {
-  "start": "foglet-scripts start",
-  "build": "foglet-scripts build"
-},
-...
-"foglet-scripts": {
-    "build": {
-      "root": "app/index.js",
-      "output": "dist/"
-    }
-  }
+  "start": "foglet-scripts start"
+}
 ```
 
-Now, create a `app/` folder in which you will put the following files
+Now, create the following files
 
-**app/index.html**
+**index.html**
 ```html
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Foglet Hellow world</title>
+    <title>Foglet Hello world</title>
   </head>
 
   <body>
     <button id="send-message">Hello World!</button>
-    <!-- foglet-scripts will build your app in one file in the dist/ folder -->
-    <script src="../dist/main.js"></script>
+    <!-- foglet-core bundle -->
+    <script src="node_modules/foglet-core/dist/foglet.bundle.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
 ```
 
-**app/index.js**
+**app.js**
 ```javascript
 'use strict'
 
 console.log('hello world')
 ```
 
-To test your installation, run `npm run build` to trigger the build chain.
-If everything went well, you should have `dist/main.js` file created, and if you
-open `index.html` in a browser, you should see **hello world!** in the console.
+To test your installation, open `index.html` in a browser, you should see **hello world!** in the console.
 
 ## Let's build the real app now!
 
 Now that's your project is ready, let's create our Hello World Foglet.
 Here is the complete code to put in **index.js**.
 
-**NB:** Notice that we use a `require` style syntax here to import dependencies, but you are free to use any import syntax you prefer.
+**NB:** Notice that we use a `require` style syntax here to import dependencies, as foglet-core bundle is built using [Browserify](http://browserify.org/)
 ```javascript
 'use strict'
 
@@ -149,8 +140,7 @@ app.connection()
 .catch(console.error) // catch connection errors
 ```
 
-Now, run `npm run build` to rebuild the app.
-Next, run `npm start` to srtart the signaling server, and then open **index.html** in two tabs, to create two distinct peers.
+Now, run `npm start` to start the signaling server, and then open **index.html** in two tabs, to create two distinct peers.
 
 Open the console, wait for connections to be done, and then click those damn buttons!
 You should see messages popping in each tab!
