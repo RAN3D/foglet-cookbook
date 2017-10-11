@@ -1,5 +1,5 @@
 {
-  "name": "foglet hello world",
+  "name": "foglet-hello-world",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
   "author": "Folkvir & Callidon",
   "license": "MIT",
   "dependencies": {
-    "foglet-core": "^3.0.1"
+    "foglet-core": "^3.1.1"
   },
   "devDependencies": {
     "foglet-scripts": "^0.2.0"

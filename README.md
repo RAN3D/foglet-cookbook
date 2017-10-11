@@ -24,7 +24,7 @@ maintains a set of neighbors K called a view that is a random subset of the whol
 To keep its view random, a data consumer renews it periodically by shuffling its view with
 the view of a random neighbor.
 
-As a Foglet rely on WebRTC for communication, it requires **a signaling server** to disocver new peers 
+As a Foglet rely on WebRTC for communication, it requires **a signaling server** to disocver new peers
 and **ICE servers** to connect browsers, throught NAT for example.
 These points will be discussed in details later.
 
@@ -96,7 +96,7 @@ Here is the complete code to put in **index.js**.
 ```javascript
 'use strict'
 
-const Foglet = require('foglet-core').Foglet
+const Foglet = require('foglet').Foglet
 
 const app = new Foglet({
   verbose: true, // activate logs. Put false to disable them in production!
