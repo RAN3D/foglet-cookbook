@@ -10,6 +10,7 @@ Welcome to foglet's documentation!
    :maxdepth: 2
 
    getting_started
+   basic_comm
    ice
 
 
