@@ -51,7 +51,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'foglet'
 copyright = '2018, Arnaud Grall'
-author = 'Arnaud Grall, Brice Nédelec, Thomas Minier'
+author = 'Arnaud Grall'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
