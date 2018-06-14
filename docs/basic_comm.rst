@@ -88,8 +88,8 @@ This callback is called with two parameters:
    })
 
 **Warning:** contrary to unicast messages, a broadcast message can be recevied from any peer in the network.
-Thus, the ``id`` can be used to conctact the emiiter (using ``sendUnicast``) at the condition
-that the emitter is a neighbour of the receiver. Otherwise, the message will simply not be sent.
+Thus, the ``id`` can be used to conctact the emitter (using ``sendUnicast``) at the condition
+that the emitter is a neighbour of the receiver. Otherwise, the message will not be sent.
 
 
 Streaming unicast and broadcast
