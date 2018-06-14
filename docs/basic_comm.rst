@@ -11,7 +11,7 @@ Unicast communication
 ^^^^^^^^^^^^^^^^^^^^^
 
 A peer can use the *unicast* primitive to send a message to one of its direct neighbour.
-However, it can't use it to send a message to a perr that is not one of its neighbours!
+However, it can't use it to send a message to a peer that is not one of its neighbours!
 
 .. code-block:: javascript
 
@@ -61,12 +61,17 @@ Broadcast communication
 
 Where the ``unicast`` and ``multicast`` primitives allow to contact neighbours, the ``broadcast`` primitive
 allow a peer to send a message to **all peers in the network**.
-This broadcast is done using a flooding algorithm.
+This broadcast is done using a flooding algorithm and implements a **causal broadcast**, which guarantee the
+following properties:
+
+- *Validity:* if a peer received a message ``m`` at least once, then ``m`` has been diffused at least once by another peer.
+- *Uniformity:* if a peer received a message ``m``, then all peers will receive ``m``.
+- *FIFO reception:* if a peer broadcast a message ``m`` and next another message ``m'``, then no peer will receive ``m'`` before ``m``.
+- *Causal reception:* if a peer receive a message ``m`` and next broadcast a message ``m'``, then no peer will receive ``m'`` before ``m``.
 
 .. code-block:: javascript
 
    my_foglet.sendBroadcast('Can I borrow some salt from someone?')
-
 
 Like ``unicast`` messages, a foglet can listen for incoming broadcast messages
 using the ``onUnicast`` method, that registers a callback executed
