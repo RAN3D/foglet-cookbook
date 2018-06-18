@@ -143,7 +143,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'foglet.tex', 'foglet Documentation',
-     'Arnaud Grall, Brice Nédelec, Thomas Minier', 'manual'),
+     'Arnaud Grall, Brice Nedelec, Thomas Minier', 'manual'),
 ]
 
 
